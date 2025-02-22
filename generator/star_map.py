@@ -27,6 +27,7 @@ class StarMap(Element):
         map_description = description if description else "Random map"
         ET.SubElement(self.root, "Title").text = self.map_name
         ET.SubElement(self.root, "Description").text = map_description
+        self.terrains = []
 
     def save_map(self, debug=False):
         tree = ET.ElementTree(self.root)

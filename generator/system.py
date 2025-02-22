@@ -1,9 +1,8 @@
-import random
-import math
 import xml.etree.ElementTree as ET
 from xml.dom.minidom import Element
 from typing import Optional, List
 
+import utils
 from node_line import NodeLine
 
 
@@ -37,11 +36,13 @@ class System(Element):
         self.node_lines: List[NodeLine] = []
 
         if terrain_coordinates:
-            x, y, z = self.random_point_in_sphere(*terrain_coordinates)
+            x, y, z = utils.random_point_in_sphere(*terrain_coordinates)
         elif fixed_coordinates:
             x, y, z = fixed_coordinates
         else:
             raise ValueError("terrain_coordinates or fixed_coordinates required")
+
+        self.coordinates = (x, y, z)
 
         ET.SubElement(self.system, "Name").text = system_name if system_name else "Random System"
         ET.SubElement(self.system, "LocalSpace").text = f"0.1,0,0,0,0,0.1,0,0,0,0,0.1,0,{x},{y},{z},1"
@@ -69,16 +70,8 @@ class System(Element):
         new_terrain.terrain_features.append(self.system)
         self.terrain_features = new_terrain.terrain_features
 
-    def random_point_in_sphere(self, center_x, center_y, center_z, radius):
-        r = radius * (random.uniform(0, 1) ** (1/3))
+    def __str__(self):
+        return f"System {self.system_guid}; {self.coordinates}"
 
-        # Generate a random direction using spherical coordinates
-        theta = random.uniform(0, 2 * math.pi)  # Random angle around Z-axis
-        phi = math.acos(random.uniform(-1, 1))  # Random angle from Z-axis
-
-        # Convert spherical coordinates to Cartesian
-        x = center_x + r * math.sin(phi) * math.cos(theta)
-        y = center_y + r * math.sin(phi) * math.sin(theta)
-        z = center_z + r * math.cos(phi)
-
-        return x, y, z
+    def __repr__(self) -> str:
+        return self.__str__()

@@ -29,6 +29,7 @@ class Terrain(Element):
         terrain_name: terrain name
         """
         self.terrain = ET.SubElement(features, "Terrain")
+        self.terrain_name = terrain_name
         ET.SubElement(self.terrain, "Name").text = terrain_name
         ET.SubElement(self.terrain, "LocalSpace").text = f"1,0,0,0,0,1,0,0,0,0,1,0,{terrain_x},{terrain_y},{terrain_z},1"
         ET.SubElement(self.terrain, "Inherit").text = terrain_name
@@ -38,6 +39,7 @@ class Terrain(Element):
         self.terrain_features = ET.SubElement(self.terrain, "Features")
         self.systems: List[System] = []
         self.node_lines = ET.SubElement(self.terrain, "NodeLines")
+        self.coordinates = (terrain_x, terrain_y, terrain_z)
 
     def generate_node_lines(self, weights=NODE_LINES_PER_SYSTEM_WEIGHTS):
         self.terrain.remove(self.node_lines)
@@ -66,6 +68,12 @@ class Terrain(Element):
                 else:
                     # no system found with node slot available
                     break
+
+    def __str__(self):
+        return f"Terrain {self.terrain_name}; {self.coordinates}; Systems: {self.systems}"
+
+    def __repr__(self) -> str:
+        return self.__str__()
 
 
 TERRAIN_NAMES = [
