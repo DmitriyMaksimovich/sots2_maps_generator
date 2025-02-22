@@ -44,7 +44,7 @@ def generate_random_clusters_starmap(num_players=7, systems=350, galaxy_radius=2
 def generate_random_sphere_starmap(num_players=7, systems=650, galaxy_radius=20):
     random_index = random.randint(1000, 9999)
     system_guid = 1000
-    terrain_avarage_size = 25
+    terrain_size = 50
 
     star_map = StarMap(num_players, f"Random sphere {random_index}", "Random sphere")
 
@@ -61,19 +61,12 @@ def generate_random_sphere_starmap(num_players=7, systems=650, galaxy_radius=20)
         )
         temporary_terrain.systems.append(system)
 
-    # choose random systems as start positions; create a terrain for each
+    # generate terrains, atleast 1 terrain per player
+    terrains_needed = max([num_players, math.ceil(systems / terrain_size)])
     terrains = []
-    for player in range(num_players):
-        starting_system = temporary_terrain.systems.pop()
-        starting_system.make_starting_system(player + 1)
-        terrain = Terrain(star_map.features, *starting_system.coordinates, random.choice(TERRAIN_NAMES))
-        terrains.append(terrain)
-        starting_system.move_to_another_terrain(terrain)
+    terrains_needed = 7
 
-    # add more terrains using random systems as starting point
-    extra_terrains_needed = math.ceil(systems / terrain_avarage_size) - len(terrains)
-
-    for terrain in range(extra_terrains_needed):
+    for terrain in range(terrains_needed):
         terrain_system = temporary_terrain.systems.pop()
         terrain = Terrain(star_map.features, *terrain_system.coordinates, random.choice(TERRAIN_NAMES))
         terrain_system.move_to_another_terrain(terrain)
@@ -84,12 +77,17 @@ def generate_random_sphere_starmap(num_players=7, systems=650, galaxy_radius=20)
     for system in temporary_terrain.systems:
         terrains.sort(key=lambda x: utils.distance(*system.coordinates, *x.coordinates))
         for terrain in terrains:
-            if len(terrain.systems) < terrain_avarage_size:
+            if len(terrain.systems) < terrain_size:
                 system.move_to_another_terrain(terrain)
                 terrain.systems.append(system)
                 break
 
-    # generate nodes, save
+    # choose starting systems
+    for player, terrain in enumerate(random.sample(terrains, num_players)):
+        system = random.choice(terrain.systems)
+        system.make_starting_system(player + 1)
+
+    # generate nodes
     for terrain in terrains:
         terrain.generate_node_lines()
 

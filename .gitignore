@@ -7,6 +7,7 @@ tmp/
 *.egg
 build
 htmlcov
+.venv
 
 starmaps/*
 *.xml
