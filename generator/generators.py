@@ -7,14 +7,21 @@ from star_map import StarMap
 from terrain import Terrain, TERRAIN_NAMES
 
 
-def generate_random_clusters_starmap(num_players=7, systems=350, galaxy_radius=20):
+def generate_random_clusters_starmap(
+        num_players=7, systems=350, galaxy_radius=30, terrain_radius=10, terrain_size=25, terrain_delta=3
+):
+    """
+    galaxy_radius=15 systems=175 - high density
+    galaxy_radius=25 systems=175 - medium density
+    """
     random_index = random.randint(1000, 9999)
     system_guid = 1000
 
-    star_map = StarMap(num_players, f"Random clusters {random_index}", "Random clusters")
+    description = f"{num_players=}, {systems=}, {galaxy_radius=}, {terrain_radius=}, {terrain_size=}, {terrain_delta=}"
+    star_map = StarMap(num_players, f"Random clusters {random_index}", description)
 
     # stars per terrain
-    star_chunks = [x for x in utils.random_chunks(list(range(systems)), 25, 3)]
+    star_chunks = [x for x in utils.random_chunks(list(range(systems)), terrain_size, terrain_delta)]
 
     # each chunk - new terrain, with amount of stars equal to chunk size
     for chunk in star_chunks:
@@ -26,7 +33,7 @@ def generate_random_clusters_starmap(num_players=7, systems=350, galaxy_radius=2
             system = System(
                 terrain_features=terrain.terrain_features,
                 system_guid=system_guid,
-                terrain_coordinates=(*terrain_coords, 9),
+                terrain_coordinates=(0, 0, 0, terrain_radius),
             )
             terrain.systems.append(system)
 
@@ -41,12 +48,12 @@ def generate_random_clusters_starmap(num_players=7, systems=350, galaxy_radius=2
     star_map.save_map(debug=False)
 
 
-def generate_random_sphere_starmap(num_players=7, systems=650, galaxy_radius=20):
+def generate_random_clusters_v2_starmap(num_players=7, systems=350, galaxy_radius=25):
     random_index = random.randint(1000, 9999)
     system_guid = 1000
-    terrain_size = 50
+    terrain_size = 25
 
-    star_map = StarMap(num_players, f"Random sphere {random_index}", "Random sphere")
+    star_map = StarMap(num_players, f"Random clusters v2 {random_index}", "Random clusters v2")
 
     # temporary terrain to generate star systems around the star map center
     temporary_terrain = Terrain(star_map.features, 0, 0, 0, random.choice(TERRAIN_NAMES))
@@ -64,7 +71,6 @@ def generate_random_sphere_starmap(num_players=7, systems=650, galaxy_radius=20)
     # generate terrains, atleast 1 terrain per player
     terrains_needed = max([num_players, math.ceil(systems / terrain_size)])
     terrains = []
-    terrains_needed = 7
 
     for terrain in range(terrains_needed):
         terrain_system = temporary_terrain.systems.pop()
@@ -96,6 +102,19 @@ def generate_random_sphere_starmap(num_players=7, systems=650, galaxy_radius=20)
     star_map.save_map(debug=False)
 
 
+def generate_clusters():
+    generate_random_clusters_starmap(7, 350, 25, 10, 25, 3)
+    generate_random_clusters_starmap(7, 350, 30, 10, 25, 3)
+    generate_random_clusters_starmap(7, 350, 35, 10, 25, 3)
+    generate_random_clusters_starmap(7, 350, 30, 10, 25, 3)
+
+    generate_random_clusters_starmap(7, 175, 15, 10, 25, 3)
+    generate_random_clusters_starmap(7, 175, 20, 10, 25, 3)
+    generate_random_clusters_starmap(7, 175, 25, 10, 25, 3)
+    generate_random_clusters_starmap(7, 175, 30, 10, 25, 3)
+
+
 if __name__ == "__main__":
-    # generate_random_clusters_starmap()
-    generate_random_sphere_starmap()
+    generate_clusters()
+    #generate_random_clusters_v2_starmap()
+    #generate_random_sphere_starmap()

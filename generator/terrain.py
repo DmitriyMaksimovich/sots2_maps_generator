@@ -11,7 +11,6 @@ NODE_LINES_PER_SYSTEM_WEIGHTS = {
     2: 8,
     3: 6,
     4: 2,
-    5: 1,
 }
 
 class Terrain(Element):
