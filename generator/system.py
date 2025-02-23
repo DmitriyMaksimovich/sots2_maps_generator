@@ -61,6 +61,11 @@ class System(Element):
         else:
             ET.SubElement(self.system, "IsStartLocation").text = "False"
 
+    def update_system_coordinates(self, x, y, z):
+        local_space = self.system.find("LocalSpace")
+        local_space.text = f"0.1,0,0,0,0,0.1,0,0,0,0,0.1,0,{x},{y},{z},1"
+        self.coordinates = (x, y, z)
+
     def make_starting_system(self, player_slot: int):
         ET.SubElement(self.system, "PlayerSlot").text = str(player_slot)
         self.system.find("IsStartLocation").text = "True"

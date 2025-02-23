@@ -39,6 +39,7 @@ class Terrain(Element):
         self.systems: List[System] = []
         self.node_lines = ET.SubElement(self.terrain, "NodeLines")
         self.coordinates = (terrain_x, terrain_y, terrain_z)
+        self.connected_terrains = []
 
     def generate_node_lines(self, weights=NODE_LINES_PER_SYSTEM_WEIGHTS):
         self.terrain.remove(self.node_lines)
@@ -86,7 +87,7 @@ TERRAIN_NAMES = [
     "Tucanae",
     "Butterfly",
     "Jewel Box",
-    "Double",
+    "Forge",
     "Messier",
     "Terzan",
     "Well",
