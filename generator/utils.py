@@ -31,3 +31,10 @@ def random_point_in_sphere(center_x, center_y, center_z, radius) -> tuple[float,
 
 def distance(x1, y1, z1, x2, y2, z2):
     return math.sqrt((x2 - x1)**2 + (y2 - y1)**2 + (z2 - z1)**2)
+
+
+def system_in_terrain_coordinates_to_global_coordinates(system, terrain):
+    x = system.coordinates[0] - terrain.coordinates[0]
+    y = system.coordinates[1] - terrain.coordinates[1]
+    z = system.coordinates[2] - terrain.coordinates[2]
+    return (x, y, z)

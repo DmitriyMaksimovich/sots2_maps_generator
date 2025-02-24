@@ -64,12 +64,24 @@ class StarMap(Element):
                 if len(_terrain_to_connect.connected_terrains) == terrains_connections:
                     # target terrain has enough connection and can't be connected one more time
                     continue
-                # TODO choose 2 closest systems
-                for _ in range(connected_systems):
+
+                terrain.systems.sort(
+                    key=lambda x: utils.distance(
+                        *_terrain_to_connect.coordinates,
+                        *utils.system_in_terrain_coordinates_to_global_coordinates(x, terrain)
+                    )
+                )
+                _terrain_to_connect.systems.sort(
+                    key=lambda x: utils.distance(
+                        *terrain.coordinates,
+                        *utils.system_in_terrain_coordinates_to_global_coordinates(x, _terrain_to_connect)
+                    )
+                )
+                for index in range(connected_systems):
                     node_line = NodeLine(
                         self.node_lines_et,
-                        random.choice(terrain.systems).system_guid,
-                        random.choice(_terrain_to_connect.systems).system_guid,
+                        terrain.systems[index].system_guid,
+                        _terrain_to_connect.systems[index].system_guid,
                     )
                     self.node_lines.append(node_line)
                 if _terrain_to_connect not in terrain.connected_terrains:
